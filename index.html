@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Βρίσκω και Εκδίδω Έγγραφα μέσω gov.gr</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: #f4f6f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 3rem;
+    }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      width: 100%;
+      background: #1a3a5c;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #c8ddf0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .nav-counter {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+      min-width: 80px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #5dcaa5;
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+
+    /* Dots menu */
+    .dots-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      position: relative;
+    }
+    .dots-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .dots-menu {
+      display: none;
+      position: absolute;
+      top: 42px;
+      right: 0;
+      background: #fff;
+      border: 0.5px solid #dde2ea;
+      border-radius: 10px;
+      padding: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      z-index: 200;
+      min-width: 200px;
+    }
+    .dots-menu.open { display: block; }
+    .dots-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #2c3e50;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .dots-menu-item:hover { background: #f0f6fc; }
+    .dots-menu-item .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-done   { background: #1d9e75; }
+    .dot-active { background: #185fa5; }
+    .dot-todo   { background: #d3d1c7; }
+    .dots-menu-item.active-step { font-weight: 600; color: #185fa5; }
+
+    /* ── MAIN CONTENT ── */
+    .lesson-wrap {
+      max-width: 720px;
+      width: 100%;
+      padding: 2rem 1rem 0;
+    }
+
+    /* Activity screen */
+    .activity {
+      display: none;
+    }
+    .activity.active {
+      display: block;
+    }
+
+    /* ── HERO (screen 1) ── */
+    .hero {
+      background: #1a3a5c;
+      border-radius: 14px;
+      padding: 2.8rem 2.5rem 2.2rem;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -70px; left: 80px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .digcomp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 0.5px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: #b8d4f0;
+      margin-bottom: 1.3rem;
+      letter-spacing: 0.03em;
+    }
+    .hero h1 {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+    .hero p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #c8ddf0;
+      max-width: 560px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* META CARDS */
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .meta-card {
+      flex: 1;
+      min-width: 170px;
+      background: #fff;
+      border: 0.5px solid #dde2ea;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .meta-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: #e6f1fb;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .meta-icon i { font-size: 18px; color: #185fa5; }
+    .meta-label { font-size: 11px; color: #7a8599; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+    .meta-value { font-size: 13px; font-weight: 500; color: #1a2b3c; line-height: 1.45; }
+
+    .section-title {
+      font-size: 12px; font-weight: 600; color: #7a8599;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;
+    }
+
+    /* TOPICS GRID */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .topic-card {
+      background: #fff;
+      border: 0.5px solid #dde2ea;
+      border-radius: 10px;
+      padding: 1.1rem 1rem;
+      text-align: center;
+    }
+    .topic-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #e6f1fb; color: #185fa5;
+      font-size: 13px; font-weight: 600; margin: 0 auto 10px;
+    }
+    .topic-card p { font-size: 13.5px; line-height: 1.55; color: #2c3e50; }
+    .topic-card strong { font-weight: 600; color: #1a3a5c; }
+
+    /* OUTCOMES */
+    .outcomes-box {
+      background: #f0f6fc;
+      border-left: 3px solid #185fa5;
+      border-radius: 0 10px 10px 0;
+      padding: 1.3rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .outcomes-title {
+      font-size: 12px; font-weight: 600; color: #185fa5;
+      text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.9rem;
+    }
+    .outcomes-title i { margin-right: 6px; font-size: 15px; vertical-align: -2px; }
+    .outcome-item { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 9px; }
+    .outcome-item:last-child { margin-bottom: 0; }
+    .outcome-item i { font-size: 17px; color: #0f6e56; flex-shrink: 0; margin-top: 1px; }
+    .outcome-item span { font-size: 14px; line-height: 1.6; color: #2c3e50; }
+
+    /* INTRO TEXT */
+    .intro-text {
+      background: #fff;
+      border: 0.5px solid #dde2ea;
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.5rem;
+      font-size: 14.5px;
+      line-height: 1.8;
+      color: #2c3e50;
+    }
+    .intro-text p + p { margin-top: 0.85rem; }
+
+    /* ── PLACEHOLDER SCREENS ── */
+    .placeholder-card {
+      background: #fff;
+      border: 0.5px solid #dde2ea;
+      border-radius: 14px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .placeholder-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 26px;
+    }
+    .placeholder-icon.video  { background: #e6f1fb; color: #185fa5; }
+    .placeholder-icon.quiz   { background: #eaf3de; color: #3b6d11; }
+    .placeholder-icon.text   { background: #faeeda; color: #854f0b; }
+    .placeholder-icon.image  { background: #fbeaf0; color: #993556; }
+    .placeholder-icon.link   { background: #eeedfe; color: #534ab7; }
+    .placeholder-title {
+      font-size: 18px; font-weight: 600; color: #1a3a5c; margin-bottom: 0.5rem;
+    }
+    .placeholder-sub {
+      font-size: 14px; color: #7a8599; line-height: 1.6;
+    }
+    .type-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+    .type-badge.video  { background: #e6f1fb; color: #185fa5; }
+    .type-badge.quiz   { background: #eaf3de; color: #3b6d11; }
+    .type-badge.text   { background: #faeeda; color: #854f0b; }
+    .type-badge.image  { background: #fbeaf0; color: #993556; }
+    .type-badge.link   { background: #eeedfe; color: #534ab7; }
+
+    /* ── BUTTONS ── */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #1a3a5c;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem 1.6rem;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .action-btn:hover { background: #185fa5; }
+    .action-btn.outline {
+      background: #fff;
+      color: #1a3a5c;
+      border: 0.5px solid #1a3a5c;
+    }
+    .action-btn.outline:hover { background: #f0f6fc; }
+    .action-btn.full { width: 100%; }
+    .action-btn i { font-size: 18px; }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 0.5rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid #dde2ea;
+    }
+    .bottom-nav .dots-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .nav-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #d3d1c7;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .nav-dot.done   { background: #1d9e75; }
+    .nav-dot.active { background: #185fa5; transform: scale(1.3); }
+    .nav-dot:hover  { background: #185fa5; }
+
+    /* ── MODAL (video) ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #1a3a5c;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 760px;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+    }
+    .modal-header span { color: #c8ddf0; font-size: 14px; font-weight: 500; }
+    .modal-close {
+      background: rgba(255,255,255,0.1); border: none; color: #fff;
+      border-radius: 6px; width: 30px; height: 30px;
+      font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+    .video-wrapper iframe {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%; border: none;
+    }
+
+    @media (max-width: 560px) {
+      .topics-grid { grid-template-columns: 1fr; }
+      .meta-row { flex-direction: column; }
+      .hero { padding: 2rem 1.5rem 1.8rem; }
+      .hero h1 { font-size: 19px; }
+      .nav-title { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVIGATION -->
+  <nav class="top-nav">
+    <span class="nav-title">Βρίσκω και Εκδίδω Έγγραφα μέσω gov.gr</span>
+    <div class="nav-right">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+      </div>
+      <span class="nav-counter" id="navCounter">1 / 10</span>
+      <div style="position:relative;">
+        <button class="dots-btn" id="dotsBtn" aria-label="Μενού δραστηριοτήτων">
+          <i class="ti ti-layout-grid" aria-hidden="true"></i>
+        </button>
+        <div class="dots-menu" id="dotsMenu">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="lesson-wrap">
+
+    <!-- ══ ΔΡΑΣΤΗΡΙΟΤΗΤΑ 1 — Εισαγωγή ══ -->
+    <div class="activity active" id="activity-1">
+      <div class="hero">
+        <div class="digcomp-badge">
+          <i class="ti ti-certificate" aria-hidden="true"></i>
+          DigComp 3.0 · Ικανότητα 2.3 · Βασικό Επίπεδο
+        </div>
+        <h1>Βρίσκω και Εκδίδω Έγγραφα μέσω gov.gr<br>Πρακτικός Οδηγός για Κάθε Πολίτη</h1>
+        <p>Μάθετε να χρησιμοποιείτε τις ψηφιακές υπηρεσίες του Ελληνικού Δημοσίου από το σπίτι σας — εύκολα, γρήγορα και ξεκούραστα.</p>
+      </div>
+
+      <div class="meta-row">
+        <div class="meta-card">
+          <div class="meta-icon"><i class="ti ti-users" aria-hidden="true"></i></div>
+          <div>
+            <div class="meta-label">Κοινό</div>
+            <div class="meta-value">Ενήλικες χωρίς εμπειρία ψηφιακών υπηρεσιών</div>
+          </div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+          <div>
+            <div class="meta-label">Διάρκεια</div>
+            <div class="meta-value">Σύντομο &amp; πρακτικό μάθημα</div>
+          </div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-icon"><i class="ti ti-school" aria-hidden="true"></i></div>
+          <div>
+            <div class="meta-label">Επίπεδο</div>
+            <div class="meta-value">Βασικό · Παραδείγματα καθημερινής ζωής</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-text">
+        <p>Καλώς ήρθατε στο ψηφιακό μάθημα <strong>«Βρίσκω και Εκδίδω Έγγραφα μέσω gov.gr»</strong>. Μαζί θα δούμε πώς μπορούμε να χρησιμοποιούμε τις ψηφιακές υπηρεσίες του Ελληνικού Δημοσίου από το σπίτι μας, εύκολα, γρήγορα και ξεκούραστα.</p>
+        <p>Το μικρομάθημα αυτό συμβάλλει στην ανάπτυξη της ψηφιακής ικανότητας <strong>«2.3 – Engaging in citizenship through digital technologies»</strong>, σε βασικό επίπεδο, όπως ορίζεται στο Ευρωπαϊκό Πλαίσιο Ψηφιακών Ικανοτήτων για τους Πολίτες (DigComp 3.0). Απευθύνεται σε ενήλικες πολίτες που δεν έχουν προηγούμενη εμπειρία από τις ψηφιακές δημόσιες υπηρεσίες.</p>
+        <p>Το μάθημα είναι σύντομο, πρακτικό και βασίζεται σε παραδείγματα από την καθημερινή ζωή. Στο τέλος, θα μπορείτε να εφαρμόζετε όσα μάθατε άμεσα και με σιγουριά.</p>
+      </div>
+
+      <p class="section-title">Τι θα δούμε</p>
+      <div class="topics-grid">
+        <div class="topic-card">
+          <div class="topic-num">1</div>
+          <p>Γνωριμία με το <strong>gov.gr</strong> και τους κωδικούς <strong>TaxisNet</strong></p>
+        </div>
+        <div class="topic-card">
+          <div class="topic-num">2</div>
+          <p>Βήμα-βήμα εύρεση του <strong>ΑΦΜ</strong> σας</p>
+        </div>
+        <div class="topic-card">
+          <div class="topic-num">3</div>
+          <p>Έκδοση <strong>πιστοποιητικού γέννησης</strong> εντελώς μόνοι σας</p>
+        </div>
+      </div>
+
+      <div class="outcomes-box">
+        <div class="outcomes-title">
+          <i class="ti ti-target" aria-hidden="true"></i>Μαθησιακά Αποτελέσματα
+        </div>
+        <div class="outcome-item">
+          <i class="ti ti-circle-check" aria-hidden="true"></i>
+          <span>Να συνδέεστε στο gov.gr με αυτοπεποίθηση και ανεξαρτησία</span>
+        </div>
+        <div class="outcome-item">
+          <i class="ti ti-circle-check" aria-hidden="true"></i>
+          <span>Να εντοπίζετε την υπηρεσία που χρειάζεστε κάθε φορά</span>
+        </div>
+        <div class="outcome-item">
+          <i class="ti ti-circle-check" aria-hidden="true"></i>
+          <span>Να εκδίδετε επίσημα έγγραφα ψηφιακά, εξοικονομώντας χρόνο και μετακινήσεις</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ΔΡΑΣΤΗΡΙΟΤΗΤΑ 2 — Βίντεο ══ -->
+    <div class="activity" id="activity-2">
+      <div class="placeholder-card" style="padding:1.5rem;">
+        <div class="type-badge video"><i class="ti ti-player-play" aria-hidden="true"></i> Βίντεο</div>
+        <div class="placeholder-title" style="margin-bottom:1.2rem;">Παρακολουθήστε το βίντεο εισαγωγής</div>
+        <video src="videos/video1.mp4" controls style="width:100%;border-radius:10px;background:#000;display:block;">
+          Ο browser σας δεν υποστηρίζει αναπαραγωγή βίντεο.
+        </video>
+      </div>
+    </div>
+
+    <!-- ══ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ 3–10 — Placeholders ══ -->
+    <div class="activity" id="activity-3">
+      <div class="placeholder-card">
+        <div class="type-badge text"><i class="ti ti-file-text" aria-hidden="true"></i> Κείμενο</div>
+        <div class="placeholder-icon text"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 3 — Κείμενο</div>
+        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-4">
+      <div class="placeholder-card">
+        <div class="type-badge quiz"><i class="ti ti-help-circle" aria-hidden="true"></i> Quiz</div>
+        <div class="placeholder-icon quiz"><i class="ti ti-help-circle" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 4 — Quiz</div>
+        <div class="placeholder-sub">Το quiz αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-5">
+      <div class="placeholder-card">
+        <div class="type-badge video"><i class="ti ti-player-play" aria-hidden="true"></i> Βίντεο</div>
+        <div class="placeholder-icon video"><i class="ti ti-player-play" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 5 — Βίντεο</div>
+        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-6">
+      <div class="placeholder-card">
+        <div class="type-badge image"><i class="ti ti-photo" aria-hidden="true"></i> Εικόνα</div>
+        <div class="placeholder-icon image"><i class="ti ti-photo" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 6 — Εικόνα</div>
+        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-7">
+      <div class="placeholder-card">
+        <div class="type-badge text"><i class="ti ti-file-text" aria-hidden="true"></i> Κείμενο</div>
+        <div class="placeholder-icon text"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 7 — Κείμενο</div>
+        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-8">
+      <div class="placeholder-card">
+        <div class="type-badge link"><i class="ti ti-external-link" aria-hidden="true"></i> Σύνδεσμος</div>
+        <div class="placeholder-icon link"><i class="ti ti-external-link" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 8 — Σύνδεσμος</div>
+        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-9">
+      <div class="placeholder-card">
+        <div class="type-badge quiz"><i class="ti ti-help-circle" aria-hidden="true"></i> Quiz</div>
+        <div class="placeholder-icon quiz"><i class="ti ti-help-circle" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 9 — Quiz</div>
+        <div class="placeholder-sub">Το quiz αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      </div>
+    </div>
+
+    <div class="activity" id="activity-10">
+      <div class="placeholder-card">
+        <div class="type-badge quiz"><i class="ti ti-award" aria-hidden="true"></i> Ολοκλήρωση</div>
+        <div class="placeholder-icon quiz"><i class="ti ti-award" aria-hidden="true"></i></div>
+        <div class="placeholder-title">Δραστηριότητα 10 — Ολοκλήρωση</div>
+        <div class="placeholder-sub">Συγχαρητήρια! Έφτασες στο τέλος του μαθήματος.</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+      <button class="action-btn outline" id="prevBtn" onclick="navigate(-1)">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> Προηγούμενο
+      </button>
+      <div class="dots-row" id="dotsRow"></div>
+      <button class="action-btn" id="nextBtn" onclick="navigate(1)">
+        Επόμενο <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+  </main>
+
+  <script>
+    const TOTAL = 10;
+    let current = 1;
+    const visited = new Set([1]);
+
+    const activities = [
+      { label: 'Εισαγωγή',      type: 'text'  },
+      { label: 'Βίντεο',        type: 'video' },
+      { label: 'Κείμενο',       type: 'text'  },
+      { label: 'Quiz',          type: 'quiz'  },
+      { label: 'Βίντεο',        type: 'video' },
+      { label: 'Εικόνα',        type: 'image' },
+      { label: 'Κείμενο',       type: 'text'  },
+      { label: 'Σύνδεσμος',     type: 'link'  },
+      { label: 'Quiz',          type: 'quiz'  },
+      { label: 'Ολοκλήρωση',    type: 'quiz'  },
+    ];
+
+    const typeIcon = { video:'ti-player-play', quiz:'ti-help-circle', text:'ti-file-text', image:'ti-photo', link:'ti-external-link' };
+
+    function goTo(n) {
+      document.getElementById('activity-' + current).classList.remove('active');
+      current = n;
+      visited.add(current);
+      document.getElementById('activity-' + current).classList.add('active');
+      updateUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigate(dir) { goTo(Math.max(1, Math.min(TOTAL, current + dir))); }
+
+    function updateUI() {
+      document.getElementById('navCounter').textContent = current + ' / ' + TOTAL;
+      document.getElementById('progressFill').style.width = (current / TOTAL * 100) + '%';
+
+      const prev = document.getElementById('prevBtn');
+      const next = document.getElementById('nextBtn');
+      prev.style.visibility = current === 1 ? 'hidden' : 'visible';
+      next.textContent = current === TOTAL ? 'Τέλος' : 'Επόμενο';
+      if (current < TOTAL) next.innerHTML = 'Επόμενο <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+      else next.innerHTML = '<i class="ti ti-check" aria-hidden="true"></i> Τέλος';
+
+      // Bottom dots
+      const row = document.getElementById('dotsRow');
+      row.innerHTML = '';
+      for (let i = 1; i <= TOTAL; i++) {
+        const d = document.createElement('button');
+        d.className = 'nav-dot' + (i === current ? ' active' : (visited.has(i) ? ' done' : ''));
+        d.title = 'Δραστηριότητα ' + i;
+        d.setAttribute('aria-label', 'Δραστηριότητα ' + i);
+        d.onclick = () => goTo(i);
+        row.appendChild(d);
+      }
+
+      // Dropdown menu
+      const menu = document.getElementById('dotsMenu');
+      menu.innerHTML = '';
+      activities.forEach((a, idx) => {
+        const n = idx + 1;
+        const btn = document.createElement('button');
+        btn.className = 'dots-menu-item' + (n === current ? ' active-step' : '');
+        const dotClass = n === current ? 'dot-active' : (visited.has(n) ? 'dot-done' : 'dot-todo');
+        btn.innerHTML = `<span class="dot ${dotClass}"></span><i class="ti ${typeIcon[a.type]}" aria-hidden="true" style="font-size:14px;color:#7a8599"></i> ${n}. ${a.label}`;
+        btn.onclick = () => { goTo(n); closeDotsMenu(); };
+        menu.appendChild(btn);
+      });
+    }
+
+    // Dots menu toggle
+    document.getElementById('dotsBtn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('dotsMenu').classList.toggle('open');
+    });
+    function closeDotsMenu() { document.getElementById('dotsMenu').classList.remove('open'); }
+    document.addEventListener('click', closeDotsMenu);
+
+    // Init
+    updateUI();
+  </script>
+
+</body>
+</html>
