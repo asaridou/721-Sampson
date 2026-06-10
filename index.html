@@ -537,9 +537,16 @@
 
     <!-- ══ ΔΡΑΣΤΗΡΙΟΤΗΤΑ 2 — Βίντεο ══ -->
     <div class="activity" id="activity-2">
-      <div class="placeholder-card" style="padding:1.5rem;">
-        <div class="type-badge video"><i class="ti ti-player-play" aria-hidden="true"></i> Βίντεο</div>
-        <div class="placeholder-title" style="margin-bottom:1.2rem;">Παρακολουθήστε το βίντεο εισαγωγής</div>
+      <div class="placeholder-card" style="padding:1.75rem 2rem;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+          <div style="width:40px;height:40px;border-radius:8px;background:#e6f1fb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-player-play" style="font-size:20px;color:#185fa5;" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p style="font-size:11px;font-weight:600;color:#185fa5;text-transform:uppercase;letter-spacing:0.07em;margin:0;">Βίντεο Κινητοποίησης</p>
+            <p style="font-size:18px;font-weight:600;color:#1a3a5c;margin:0;">Παρακαλούμε παρακολουθήστε το παρακάτω βίντεο</p>
+          </div>
+        </div>
         <video src="video1.mp4" controls style="width:100%;border-radius:10px;background:#000;display:block;">
           Ο browser σας δεν υποστηρίζει αναπαραγωγή βίντεο.
         </video>
@@ -620,7 +627,6 @@
       </div>
 
       <div class="placeholder-card" style="padding:1.5rem;">
-        <p style="font-size:14px;font-weight:600;color:#1a3a5c;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 1rem;">▼ Ξεκινήστε το Quiz</p>
         <iframe
           src="https://app.lumi.education/run/akZV7e"
           style="width:100%;height:600px;border:none;border-radius:10px;display:block;"
@@ -1157,11 +1163,71 @@
     </div>
 
     <div class="activity" id="activity-9">
-      <div class="placeholder-card">
-        <div class="type-badge quiz"><i class="ti ti-help-circle" aria-hidden="true"></i> Quiz</div>
-        <div class="placeholder-icon quiz"><i class="ti ti-help-circle" aria-hidden="true"></i></div>
-        <div class="placeholder-title">Δραστηριότητα 9 — Quiz</div>
-        <div class="placeholder-sub">Το quiz αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      <div class="placeholder-card" style="padding:1.75rem 2rem;">
+
+        <!-- Header -->
+        <div style="text-align:center;margin-bottom:1.75rem;">
+          <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#1a3a5c,#185fa5);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px;">🏆</div>
+          <p style="font-size:11px;font-weight:600;color:#185fa5;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 6px;">Τελική Αξιολόγηση</p>
+          <p style="font-size:20px;font-weight:600;color:#1a3a5c;margin:0;">Οδηγίες Τελικής Αξιολόγησης</p>
+        </div>
+
+        <!-- Intro -->
+        <div style="background:#f0f6fc;border-left:3px solid #185fa5;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+          <p style="font-size:15px;color:#1a3a5c;line-height:1.7;margin:0;">Φτάσατε στην <strong>Τελική Αξιολόγηση!</strong> Πριν ξεκινήσετε, διαβάστε προσεκτικά τις παρακάτω οδηγίες.</p>
+        </div>
+
+        <!-- Rules -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.75rem;">
+
+          <div style="background:#fff;border:0.5px solid #dde2ea;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;text-align:left;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#e6f1fb;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">📝</div>
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#1a3a5c;margin:0 0 3px;">Δομή του Quiz</p>
+              <p style="font-size:14px;color:#2c3e50;line-height:1.6;margin:0;"><strong>10 ερωτήσεις</strong> πολλαπλής επιλογής βασισμένες σε σενάρια από την καθημερινή ζωή.</p>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:0.5px solid #dde2ea;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;text-align:left;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#eaf3de;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🎯</div>
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#1a3a5c;margin:0 0 3px;">Βαθμολογία Επιτυχίας</p>
+              <p style="font-size:14px;color:#2c3e50;line-height:1.6;margin:0;">Απαιτείται βαθμολογία <strong>≥ 80%</strong> (8/10 σωστές) για την επιτυχή ολοκλήρωση.</p>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:0.5px solid #dde2ea;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;text-align:left;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#faeeda;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🔄</div>
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#1a3a5c;margin:0 0 3px;">Προσπάθειες</p>
+              <p style="font-size:14px;color:#2c3e50;line-height:1.6;margin:0;">Επιτρέπονται <strong>2 προσπάθειες</strong>.</p>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:0.5px solid #dde2ea;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;text-align:left;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#fbeaf0;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">⚠️</div>
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#1a3a5c;margin:0 0 3px;">Ανατροφοδότηση</p>
+              <p style="font-size:14px;color:#2c3e50;line-height:1.6;margin:0;">Κατά τη διάρκεια της εξέτασης <strong>δεν παρέχεται ανατροφοδότηση</strong> — μόλις ολοκληρώσετε, θα δείτε τα αποτελέσματά σας.</p>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:0.5px solid #dde2ea;border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;text-align:left;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#eaf3de;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🎓</div>
+            <div>
+              <p style="font-size:13px;font-weight:600;color:#1a3a5c;margin:0 0 3px;">Πιστοποιητικό</p>
+              <p style="font-size:14px;color:#2c3e50;line-height:1.6;margin:0;">Αν περάσετε, θα λάβετε αυτόματα <strong>Πιστοποιητικό Ολοκλήρωσης</strong>.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="background:linear-gradient(135deg,#1a3a5c,#185fa5);border-radius:10px;padding:1.25rem 1.5rem;text-align:center;">
+          <p style="font-size:16px;font-weight:600;color:#fff;margin:0;">🍀 Καλή επιτυχία!</p>
+          <p style="font-size:13px;color:rgba(255,255,255,0.75);margin:6px 0 0;">Πατήστε «Επόμενο» για να ξεκινήσετε την αξιολόγηση.</p>
+        </div>
+
       </div>
     </div>
 
@@ -1201,8 +1267,8 @@
       { label: 'Quiz',          type: 'quiz'  },
       { label: 'Επίδειξη',      type: 'video' },
       { label: 'Εξάσκηση',      type: 'text'  },
-      { label: 'Quiz',          type: 'quiz'  },
-      { label: 'Ολοκλήρωση',    type: 'quiz'  },
+      { label: 'Οδηγίες',       type: 'text'  },
+      { label: 'Αξιολόγηση',    type: 'quiz'  },
     ];
 
     const typeIcon = { video:'ti-player-play', quiz:'ti-help-circle', text:'ti-file-text', image:'ti-photo', link:'ti-external-link' };
