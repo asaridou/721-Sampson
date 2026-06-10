@@ -922,13 +922,23 @@
         function a7Toggle(id) {
           var card = document.getElementById(id);
           var isOpen = card.classList.contains('open');
-          document.querySelectorAll('.a7-step-card').forEach(function(c){ c.classList.remove('open','active'); });
-          if (!isOpen) { card.classList.add('open','active'); }
+          document.querySelectorAll('[id^="a7s"]').forEach(function(c){ 
+            c.classList.remove('open','active');
+            var body = c.querySelector('.a7-step-body');
+            if (body) body.style.display = 'none';
+          });
+          if (!isOpen) { 
+            card.classList.add('open','active');
+            var body = card.querySelector('.a7-step-body');
+            if (body) body.style.display = 'block';
+          }
         }
         function a7Done(id) {
           var card = document.getElementById(id);
           if (card.classList.contains('done')) return;
           card.classList.add('done'); card.classList.remove('open','active');
+          var body = card.querySelector('.a7-step-body');
+          if (body) body.style.display = 'none';
           a7Done_count++;
           document.getElementById('a7ProgressFill').style.width = (a7Done_count/5*100)+'%';
           document.getElementById('a7ProgressText').textContent = a7Done_count+' / 5 βήματα';
@@ -942,17 +952,207 @@
           }
         }
         // Άνοιγμα πρώτου βήματος
-        setTimeout(function(){ a7Toggle('a7s1'); }, 100);
+        setTimeout(function(){ a7Toggle('a7s1'); }, 200);
       </script>
     </div>
 
     <div class="activity" id="activity-8">
-      <div class="placeholder-card">
-        <div class="type-badge link"><i class="ti ti-external-link" aria-hidden="true"></i> Σύνδεσμος</div>
-        <div class="placeholder-icon link"><i class="ti ti-external-link" aria-hidden="true"></i></div>
-        <div class="placeholder-title">Δραστηριότητα 8 — Σύνδεσμος</div>
-        <div class="placeholder-sub">Το περιεχόμενο αυτής της δραστηριότητας θα προστεθεί σύντομα.</div>
+      <style>
+        .a8-wrap *, .a8-wrap *::before, .a8-wrap *::after { box-sizing: border-box; }
+        .a8-instr-bar { background:#fff; border-bottom:2px solid var(--a7-blue-light,#D6E8F7); padding:14px 0; margin-bottom:20px; border-radius:10px; }
+        .a8-instr-inner { display:flex; align-items:center; gap:14px; padding:0 20px; }
+        .a8-instr-icon { width:36px;height:36px;background:#e6f1fb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+        .a8-instr-inner p { font-size:14px;color:#1F4E79;line-height:1.5; }
+        .a8-steps-header { background:#fff;border-radius:12px;padding:20px 24px;box-shadow:0 2px 10px rgba(31,78,121,0.07);margin-bottom:14px; }
+        .a8-steps-header h2 { font-size:15px;font-weight:700;color:#1F4E79;margin-bottom:6px; }
+        .a8-steps-header p { font-size:13px;color:#5a6a7a;line-height:1.5; }
+        .a8-progress-wrap { margin-top:12px; }
+        .a8-progress-label { display:flex;justify-content:space-between;font-size:12px;color:#5a6a7a;margin-bottom:6px; }
+        .a8-progress-bar { height:6px;background:#D6E8F7;border-radius:3px;overflow:hidden; }
+        .a8-progress-fill { height:100%;background:linear-gradient(90deg,#2E75B6,#1F4E79);border-radius:3px;width:0%;transition:width 0.4s ease; }
+        .a8-steps-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:20px; }
+        .a8-step-card { background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(31,78,121,0.07);border:2px solid transparent;transition:border-color 0.2s;cursor:pointer; }
+        .a8-step-card.active { border-color:#2E75B6;box-shadow:0 4px 20px rgba(46,117,182,0.15); }
+        .a8-step-card.done { border-color:#2E7D4F; }
+        .a8-step-header { display:flex;align-items:center;gap:14px;padding:14px 18px; }
+        .a8-step-number { width:34px;height:34px;border-radius:50%;background:#e6f1fb;color:#1F4E79;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s,color 0.2s; }
+        .a8-step-card.active .a8-step-number { background:#1F4E79;color:#fff; }
+        .a8-step-card.done .a8-step-number { background:#2E7D4F;color:#fff; }
+        .a8-step-card.done .a8-snum { display:none; }
+        .a8-step-card.done .a8-step-number::after { content:'✓'; }
+        .a8-step-title { font-size:14px;font-weight:600;color:#1F4E79;flex:1; }
+        .a8-step-toggle { width:26px;height:26px;border-radius:50%;background:#EEF5FB;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#2E75B6;font-size:13px;transition:transform 0.2s;flex-shrink:0; }
+        .a8-step-card.open .a8-step-toggle { transform:rotate(180deg); }
+        .a8-step-body { display:none;padding:0 18px 18px 66px;border-top:1px solid #EEF5FB; }
+        .a8-step-card.open .a8-step-body { display:block; }
+        .a8-step-body p { font-size:14px;line-height:1.7;color:#1a1a2e;margin-bottom:10px; }
+        .a8-step-hint { background:#fffbe6;border-left:3px solid #C8992A;border-radius:0 6px 6px 0;padding:10px 12px;font-size:13px;color:#7a5a00;line-height:1.5;margin-top:10px; }
+        .a8-mark-btn { margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:#E8F5EE;color:#2E7D4F;border:1.5px solid #2E7D4F;border-radius:20px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s,color 0.2s;font-family:inherit; }
+        .a8-mark-btn:hover { background:#2E7D4F;color:#fff; }
+        .a8-step-card.done .a8-mark-btn { display:none; }
+        .a8-completion { background:linear-gradient(135deg,#2E7D4F 0%,#1a5c35 100%);border-radius:12px;padding:28px;text-align:center;display:none;margin-bottom:20px; }
+        .a8-completion.visible { display:block; }
+        .a8-completion .a8-check { width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px; }
+        .a8-completion h3 { font-size:18px;font-weight:700;color:#fff;margin-bottom:8px; }
+        .a8-completion p { font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6; }
+        @media(max-width:560px){ .a8-steps-grid{grid-template-columns:1fr;} .a8-step-body{padding-left:18px;} }
+      </style>
+
+      <div class="a8-wrap">
+        <div class="a8-instr-bar">
+          <div class="a8-instr-inner">
+            <div class="a8-instr-icon">🎯</div>
+            <p><strong>Οδηγίες:</strong> Ακολουθήστε τα βήματα και εκδώστε μόνοι σας ένα Πιστοποιητικό Γέννησης από το gov.gr. Κάθε βήμα έχει hint αν χρειαστείτε βοήθεια. Πατήστε «Το κατάλαβα!» μόλις ολοκληρώσετε κάθε βήμα.</p>
+          </div>
+        </div>
+
+        <div class="placeholder-card" style="padding:1.5rem;margin-bottom:20px;">
+          <iframe
+            src="https://app.lumi.education/run/fudvQi"
+            style="width:100%;height:600px;border:none;border-radius:10px;display:block;"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="a8-steps-header">
+          <h2>📋 Τα 6 βήματα της δραστηριότητας</h2>
+          <p>Εκδώστε Πιστοποιητικό Γέννησης βήμα-βήμα μόνοι σας.</p>
+          <div class="a8-progress-wrap">
+            <div class="a8-progress-label">
+              <span>Πρόοδος</span>
+              <span id="a8ProgressText">0 / 6 βήματα</span>
+            </div>
+            <div class="a8-progress-bar">
+              <div class="a8-progress-fill" id="a8ProgressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="a8-steps-grid">
+          <!-- Βήμα 1 -->
+          <div class="a8-step-card" id="a8s1">
+            <div class="a8-step-header" onclick="a8Toggle('a8s1')">
+              <div class="a8-step-number"><span class="a8-snum">1</span></div>
+              <div class="a8-step-title">Ανοίξτε το gov.gr</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Ανοίξτε τον browser και μεταβείτε στη διεύθυνση <strong>www.gov.gr</strong>. Πληκτρολογήστε τη διεύθυνση στη γραμμή διεύθυνσης και πατήστε Enter.</p>
+              <div class="a8-step-hint"><strong>💡 Hint:</strong> Βεβαιωθείτε ότι γράφετε σωστά: <strong>www.gov.gr</strong></div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s1')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+          <!-- Βήμα 2 -->
+          <div class="a8-step-card" id="a8s2">
+            <div class="a8-step-header" onclick="a8Toggle('a8s2')">
+              <div class="a8-step-number"><span class="a8-snum">2</span></div>
+              <div class="a8-step-title">Συνδεθείτε με TaxisNet</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Πατήστε <strong>«Σύνδεση»</strong> πάνω δεξιά και εισάγετε τους κωδικούς TaxisNet σας.</p>
+              <div class="a8-step-hint"><strong>💡 Hint:</strong> Βεβαιωθείτε ότι εισάγετε σωστά username και κωδικό.</div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s2')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+          <!-- Βήμα 3 -->
+          <div class="a8-step-card" id="a8s3">
+            <div class="a8-step-header" onclick="a8Toggle('a8s3')">
+              <div class="a8-step-number"><span class="a8-snum">3</span></div>
+              <div class="a8-step-title">Αναζητήστε «Πιστοποιητικό Γέννησης»</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Χρησιμοποιήστε τη μπάρα αναζήτησης στο κέντρο και πληκτρολογήστε <strong>«Πιστοποιητικό Γέννησης»</strong>.</p>
+              <div class="a8-step-hint"><strong>💡 Hint:</strong> Δοκιμάστε «πιστοποιητικό» ή «γέννηση».</div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s3')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+          <!-- Βήμα 4 -->
+          <div class="a8-step-card" id="a8s4">
+            <div class="a8-step-header" onclick="a8Toggle('a8s4')">
+              <div class="a8-step-number"><span class="a8-snum">4</span></div>
+              <div class="a8-step-title">Επιλέξτε την υπηρεσία</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Επιλέξτε την υπηρεσία από τα αποτελέσματα και ολοκληρώστε την αίτηση.</p>
+              <div class="a8-step-hint"><strong>💡 Hint:</strong> Ακολουθήστε τα βήματα που εμφανίζονται στην οθόνη, διαβάζοντας τις οδηγίες και συμπληρώνοντας τα απαιτούμενα πεδία.</div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s4')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+          <!-- Βήμα 5 -->
+          <div class="a8-step-card" id="a8s5">
+            <div class="a8-step-header" onclick="a8Toggle('a8s5')">
+              <div class="a8-step-number"><span class="a8-snum">5</span></div>
+              <div class="a8-step-title">Αποθηκεύστε το PDF</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Πατήστε <strong>«Αποθήκευση ως PDF»</strong> για να αποθηκεύσετε το πιστοποιητικό στη συσκευή σας.</p>
+              <div class="a8-step-hint"><strong>💡 Hint:</strong> Αποθηκεύστε το PDF σε φάκελο που θα θυμάστε, π.χ. «Έγγραφα».</div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s5')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+          <!-- Βήμα 6 -->
+          <div class="a8-step-card" id="a8s6">
+            <div class="a8-step-header" onclick="a8Toggle('a8s6')">
+              <div class="a8-step-number"><span class="a8-snum">6</span></div>
+              <div class="a8-step-title">Αποσυνδεθείτε</div>
+              <button class="a8-step-toggle" aria-label="Εμφάνιση/Απόκρυψη">▼</button>
+            </div>
+            <div class="a8-step-body" style="display:none">
+              <p>Πατήστε το όνομά σας πάνω δεξιά και επιλέξτε <strong>«Αποσύνδεση»</strong>.</p>
+              <div class="a8-step-hint"><strong>⚠️ Hint:</strong> Θυμηθείτε πάντα να αποσυνδέεστε για λόγους ασφαλείας.</div>
+              <button class="a8-mark-btn" onclick="a8Done('a8s6')">✓ Το κατάλαβα!</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="a8-completion" id="a8Completion">
+          <div class="a8-check">🎉</div>
+          <h3>Μπράβο! Ολοκληρώσατε τη δραστηριότητα!</h3>
+          <p>Εξέδωσες Πιστοποιητικό Γέννησης μόνος σου! Συνέχισε στην επόμενη δραστηριότητα.</p>
+        </div>
       </div>
+    </div>
+
+    <div class="activity" id="activity-9">
+        var a8Done_count = 0;
+        function a8Toggle(id) {
+          var card = document.getElementById(id);
+          var isOpen = card.classList.contains('open');
+          document.querySelectorAll('[id^="a8s"]').forEach(function(c){ 
+            c.classList.remove('open','active');
+            var body = c.querySelector('.a8-step-body');
+            if (body) body.style.display = 'none';
+          });
+          if (!isOpen) { 
+            card.classList.add('open','active');
+            var body = card.querySelector('.a8-step-body');
+            if (body) body.style.display = 'block';
+          }
+        }
+        function a8Done(id) {
+          var card = document.getElementById(id);
+          if (card.classList.contains('done')) return;
+          card.classList.add('done'); card.classList.remove('open','active');
+          var body = card.querySelector('.a8-step-body');
+          if (body) body.style.display = 'none';
+          a8Done_count++;
+          document.getElementById('a8ProgressFill').style.width = (a8Done_count/6*100)+'%';
+          document.getElementById('a8ProgressText').textContent = a8Done_count+' / 6 βήματα';
+          var num = parseInt(id.replace('a8s',''));
+          var next = document.getElementById('a8s'+(num+1));
+          if (next && !next.classList.contains('done')) a8Toggle('a8s'+(num+1));
+          if (a8Done_count===6) {
+            var box = document.getElementById('a8Completion');
+            box.classList.add('visible');
+            box.scrollIntoView({behavior:'smooth',block:'center'});
+          }
+        }
+        setTimeout(function(){ a8Toggle('a8s1'); }, 200);
+      </script>
     </div>
 
     <div class="activity" id="activity-9">
@@ -999,7 +1199,7 @@
       { label: 'Παρουσίαση',    type: 'text'  },
       { label: 'Quiz',          type: 'quiz'  },
       { label: 'Επίδειξη',      type: 'video' },
-      { label: 'Σύνδεσμος',     type: 'link'  },
+      { label: 'Εξάσκηση',      type: 'text'  },
       { label: 'Quiz',          type: 'quiz'  },
       { label: 'Ολοκλήρωση',    type: 'quiz'  },
     ];
